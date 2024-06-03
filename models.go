@@ -39,11 +39,21 @@ func getTodos() ([]Todo, error) {
 }
 
 func createTodo(title string) (int64, error) {
+	var id int64
 	query := "INSERT INTO todos(title) VALUES ($1) RETURNING id"
 
-	var id int64
+	stmt, err := DB.Prepare(query)
+	if err != nil {
+		return 0, err
+	}
+	defer func(stmt *sql.Stmt) {
+		err = stmt.Close()
+		if err != nil {
+			log.Panic(err)
+		}
+	}(stmt)
 
-	err := DB.QueryRow(query, title).Scan(&id)
+	err = stmt.QueryRow(title).Scan(&id)
 
 	if err != nil {
 		return 0, err

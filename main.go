@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"os"
 )
 
 func main() {
@@ -27,6 +28,7 @@ func main() {
 		todos.GET("", getTodosHandler)
 		todos.POST("", createTodoHandler)
 	}
+	os.Create()
 
 	err = app.Run(":8080")
 	if err != nil {
