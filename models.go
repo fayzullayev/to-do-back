@@ -37,7 +37,6 @@ func getTodos() ([]Todo, error) {
 
 	return todos, nil
 }
-
 func createTodo(title string) (int64, error) {
 	var id int64
 	query := "INSERT INTO todos(title) VALUES ($1) RETURNING id"
@@ -60,4 +59,69 @@ func createTodo(title string) (int64, error) {
 	}
 
 	return id, nil
+}
+func getTodoByID(id int) (Todo, error) {
+	var todo Todo
+	query := "SELECT id,title,is_done FROM todos WHERE id=$1"
+	stmt, err := DB.Prepare(query)
+
+	if err != nil {
+		return todo, err
+	}
+
+	if err = stmt.QueryRow(id).Scan(&todo.Id, &todo.Title, &todo.IsDone); err != nil {
+		return todo, err
+	}
+	return todo, nil
+}
+func updateTodo(todo Todo) error {
+
+	query := "UPDATE todos SET title = $1, is_done = $2, edited_at = CURRENT_TIMESTAMP WHERE id = $3"
+
+	stmt, err := DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	exec, err := stmt.Exec(todo.Title, todo.IsDone, todo.Id)
+	if err != nil {
+		return err
+	}
+
+	num, err := exec.RowsAffected()
+
+	if err != nil {
+		return err
+	}
+
+	if num == 1 {
+		return nil
+	}
+
+	return err
+}
+func deleteTodo(id int) error {
+	query := "DELETE FROM todos WHERE id = $1"
+
+	stmt, err := DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	result, err := stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	num, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if num == 1 {
+		return nil
+	}
+
+	return err
 }
