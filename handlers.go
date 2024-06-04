@@ -21,7 +21,7 @@ func getTodosHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, todos)
+	SuccessResponse(c, "Todos successful fetched", "null")
 }
 
 func createTodoHandler(c *gin.Context) {

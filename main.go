@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"log"
 )
@@ -21,7 +22,11 @@ func main() {
 		return
 	}
 
-	todos := app.Group("/todos")
+	app.Use(cors.Default())
+
+	api := app.Group("/api")
+
+	todos := api.Group("/todos")
 
 	{
 		todos.GET("", getTodosHandler)
