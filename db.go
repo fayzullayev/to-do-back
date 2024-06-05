@@ -12,7 +12,6 @@ const Driver string = "postgres"
 const ConString = "postgres://postgres:12345@localhost:5432/postgres?sslmode=disable"
 
 func InitDB() error {
-
 	var err error
 
 	DB, err = sql.Open(Driver, ConString)
@@ -38,7 +37,7 @@ func InitDB() error {
 func createTables() error {
 	var err error
 
-	const userTableCreate = `
+	const todoTableCreate = `
 		CREATE TABLE IF NOT EXISTS todos (
 			id SERIAL PRIMARY KEY, 
 			title VARCHAR (200) NOT NULL, 
@@ -48,7 +47,7 @@ func createTables() error {
 		)
 	`
 
-	_, err = DB.Exec(userTableCreate)
+	_, err = DB.Exec(todoTableCreate)
 
 	if err != nil {
 		return err
