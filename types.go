@@ -11,3 +11,7 @@ type SuccessResponseType[T any] struct {
 	Code    uint8  `json:"code"`
 	Data    T      `json:"data"`
 }
+
+type ErrorResponseType struct {
+	Message string `json:"message"`
+}

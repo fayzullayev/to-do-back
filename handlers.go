@@ -1,53 +1,27 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
 
-func pong(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
-	})
-}
-
 func getTodosHandler(c *gin.Context) {
-
 	todos, err := getTodos()
+	ErrorResponse(err, c, 500, "Internal Server Error")
 
-	if err != nil {
-		c.String(500, "Internal Server Error")
-		return
-	}
-
-	SuccessResponse(c, "Todos successful fetched", "null")
+	SuccessResponse(c, "Todos successful fetched", todos)
 }
 
 func createTodoHandler(c *gin.Context) {
 	var todo Todo
 
-	if err := c.ShouldBindJSON(&todo); err != nil {
-		c.JSON(400, gin.H{
-			"message": "Bad Request",
-			"error":   err.Error(),
-		})
-		return
-	}
+	err := c.ShouldBindJSON(&todo)
+	ErrorResponse(err, c, 400, "Invalid Request Body")
 
 	id, err := createTodo(todo.Title)
+	ErrorResponse(err, c, 500, "Internal Server Error")
 
-	if err != nil {
-		c.JSON(500, gin.H{
-			"message": "Internal Server Error",
-			"error":   err.Error(),
-		})
-		return
-	}
-
-	c.JSON(200, gin.H{
-		"id": id,
-	})
+	SuccessResponse(c, "Todos successful created", id)
 }
 
 func changeTodoHandler(c *gin.Context) {
@@ -57,78 +31,31 @@ func changeTodoHandler(c *gin.Context) {
 	todoId := c.Param("id")
 
 	id, err := strconv.Atoi(todoId)
-
-	if err != nil {
-		c.JSON(404, gin.H{
-			"message": "To do not found",
-		})
-		return
-	}
+	ErrorResponse(err, c, 404, "To do not found")
 
 	todo, err = getTodoByID(id)
+	ErrorResponse(err, c, 404, "To do not found")
 
-	if err != nil {
-		c.JSON(404, gin.H{
-			"message": "To do not found",
-		})
-		return
-	}
-
-	fmt.Printf("before update %+v\n", todo)
-
-	if err = c.ShouldBindJSON(&todo); err != nil {
-		c.JSON(400, gin.H{
-			"message": "Bad Request",
-		})
-		return
-	}
+	err = c.ShouldBindJSON(&todo)
+	ErrorResponse(err, c, 400, "Bad Request")
 
 	err = updateTodo(todo)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"message": "Internal server error",
-			"error":   err.Error(),
-		})
-		return
-	}
+	ErrorResponse(err, c, 500, "Internal Server Error")
 
-	c.JSON(200, gin.H{
-		"message": "Update success",
-		"data":    todo,
-	})
-
+	SuccessResponse(c, "Update success", todo)
 }
 
 func deleteTodoHandler(c *gin.Context) {
 	idParam := c.Param("id")
 
 	id, err := strconv.Atoi(idParam)
-
-	if err != nil {
-		c.JSON(404, gin.H{
-			"message": "To do not found",
-		})
-		return
-	}
+	ErrorResponse(err, c, 404, "To do not found")
 
 	todo, err := getTodoByID(id)
-	if err != nil {
-		c.JSON(404, gin.H{
-			"message": "To do not found",
-		})
-		return
-	}
+	ErrorResponse(err, c, 404, "To do not found")
 
 	err = deleteTodo(todo.Id)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"message": "Internal server error",
-		})
-		return
-	}
+	ErrorResponse(err, c, 500, "Internal Server Error")
 
-	c.JSON(200, gin.H{
-		"message": "Deleted success",
-	})
-
+	SuccessResponse(c, "Delete success", struct{}{})
 }
