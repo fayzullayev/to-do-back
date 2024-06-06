@@ -18,16 +18,6 @@ func SuccessResponse[T any](c *gin.Context, message string, data T) {
 }
 
 func ErrorResponse(err error, c *gin.Context, code int, message string) {
-	if err != nil {
-		c.JSON(
-			code,
-			ErrorResponseType{
-				Message: message,
-			},
-		)
-
-		log.Println(err)
-		return
-	}
-
+	c.String(code, message)
+	log.Println(err)
 }
