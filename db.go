@@ -39,6 +39,7 @@ func createTables() error {
 
 	const todoTableCreate = `
 		CREATE TABLE IF NOT EXISTS todos (
+		    u_id uuid DEFAULT gen_random_uuid(),
 			id SERIAL PRIMARY KEY, 
 			title VARCHAR (200) NOT NULL, 
 		    is_done BOOLEAN DEFAULT FALSE,

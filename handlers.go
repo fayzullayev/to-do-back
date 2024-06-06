@@ -21,11 +21,13 @@ func createTodoHandler(c *gin.Context) {
 	err := c.ShouldBindJSON(&todo)
 	if err != nil {
 		ErrorResponse(err, c, 400, "Invalid Request Body")
+		return
 	}
 
 	id, err := createTodo(todo.Title)
 	if err != nil {
 		ErrorResponse(err, c, 500, "Internal Server Error")
+		return
 	}
 
 	SuccessResponse(c, "Todos successful created", id)
@@ -40,21 +42,25 @@ func changeTodoHandler(c *gin.Context) {
 	id, err := strconv.Atoi(todoId)
 	if err != nil {
 		ErrorResponse(err, c, 404, "To do not found")
+		return
 	}
 
 	todo, err = getTodoByID(id)
 	if err != nil {
 		ErrorResponse(err, c, 404, "To do not found")
+		return
 	}
 
 	err = c.ShouldBindJSON(&todo)
 	if err != nil {
 		ErrorResponse(err, c, 400, "Bad Request")
+		return
 	}
 
 	err = updateTodo(todo)
 	if err != nil {
 		ErrorResponse(err, c, 500, "Internal Server Error")
+		return
 	}
 
 	SuccessResponse(c, "Update success", todo)
@@ -66,16 +72,19 @@ func deleteTodoHandler(c *gin.Context) {
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		ErrorResponse(err, c, 404, "To do not found")
+		return
 	}
 
 	todo, err := getTodoByID(id)
 	if err != nil {
 		ErrorResponse(err, c, 404, "To do not found")
+		return
 	}
 
 	err = deleteTodo(todo.Id)
 	if err != nil {
 		ErrorResponse(err, c, 500, "Internal Server Error")
+		return
 	}
 
 	SuccessResponse(c, "Delete success", struct{}{})

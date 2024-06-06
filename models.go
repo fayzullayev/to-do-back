@@ -37,13 +37,13 @@ func getTodos() ([]Todo, error) {
 
 	return todos, nil
 }
-func createTodo(title string) (int64, error) {
-	var id int64
-	query := "INSERT INTO todos(title) VALUES ($1) RETURNING id"
+func createTodo(title string) (string, error) {
+	var id string
+	query := "INSERT INTO todos(title) VALUES ($1) RETURNING u_id"
 
 	stmt, err := DB.Prepare(query)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	defer func(stmt *sql.Stmt) {
 		err = stmt.Close()
@@ -55,7 +55,7 @@ func createTodo(title string) (int64, error) {
 	err = stmt.QueryRow(title).Scan(&id)
 
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	return id, nil
