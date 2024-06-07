@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -23,6 +24,7 @@ func createTodoHandler(c *gin.Context) {
 		ErrorResponse(err, c, 400, "Invalid Request Body")
 		return
 	}
+	fmt.Printf("%+v\n", todo)
 
 	id, err := createTodo(todo.Title)
 	if err != nil {
