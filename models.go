@@ -8,7 +8,7 @@ import (
 func getTodos() ([]Todo, error) {
 	todos := []Todo{}
 
-	var query = "SELECT id,title,is_done FROM todos ORDER BY created_at"
+	var query = "SELECT id,title,is_done FROM todos ORDER BY created_at DESC "
 
 	rows, err := DB.Query(query)
 	if err != nil {
